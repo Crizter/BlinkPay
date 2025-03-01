@@ -30,7 +30,7 @@ const App = () => {
       case "/camera-selector":
         return <CameraSelector navigate={navigate} />; // Added CameraSelector
       default:
-        return <Home />;
+        return <Home navigate={navigate} />; // ✅ Pass navigate to Home
     }
   };
 
