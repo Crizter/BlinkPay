@@ -3,9 +3,9 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    res.send("Welcome to the Express API!");
-});
+// router.get("/", (req, res) => {
+//     res.send("Welcome to the Express API!");
+// });
 
 // router.use("/users", usersRoutes);
 

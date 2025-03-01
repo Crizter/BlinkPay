@@ -1,6 +1,6 @@
 import express from "express";
 import EyeData from "../models/eyeDataSchema.models.js";
-import User from "../models/user.model.js";
+import User from "../models/user.models.js";
 
 const router = express.Router();
 
@@ -13,22 +13,42 @@ router.post("/users/register", async (req, res) => {
   try {
     const { name, email, irisData, upiId } = req.body;
 
-    // Check if email or UPI ID is already registered
-    const existingUser = await User.findOne({ $or: [{ email }, { upiId }] });
-    if (existingUser) {
-      return res.status(400).json({ message: "User with this email or UPI ID already exists" });
+    // 1️⃣ Validate required fields
+    if (!name || !email || !irisData || !upiId) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
-    // Create and save new user
+    // 2️⃣ Validate irisData structure
+    if (
+      !irisData.leftIris ||
+      !irisData.rightIris ||
+      !Array.isArray(irisData.leftIris) ||
+      !Array.isArray(irisData.rightIris)
+    ) {
+      return res.status(400).json({ success: false, message: "Invalid irisData format" });
+    }
+
+    // 3️⃣ Check if email or UPI ID is already registered
+    const existingUser = await User.findOne({ $or: [{ email }, { upiId }] });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User with this email or UPI ID already exists" });
+    }
+
+    // 4️⃣ Create and save new user
     const newUser = new User({ name, email, irisData, upiId, balance: 1000 });
     await newUser.save();
 
-    res.status(201).json({ success: true, message: "User registered successfully", user: newUser });
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: newUser,
+    });
   } catch (error) {
     console.error("Registration Error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 /**
  * @route   GET /api/users/get-user/:email
