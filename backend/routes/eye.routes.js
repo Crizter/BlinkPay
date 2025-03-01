@@ -3,25 +3,54 @@ import EyeData from "../models/eyeDataSchema.models.js";
 
 const router = express.Router();
 
-// POST: Save new eye scan data
-router.post("/save-eye-data", async (req, res) => {
+// Register eye scan
+router.post("/register-eye", async (req, res) => {
   try {
     const { userId, irisHash, eyeMovementPattern } = req.body;
-    const eyeData = new EyeData({ user: userId, irisHash, customEyeMovementPattern: eyeMovementPattern });
+    const existingData = await EyeData.findOne({ user: userId });
+
+    if (existingData) {
+      return res.status(400).json({ success: false, message: "Eye data already registered" });
+    }
+
+    const eyeData = new EyeData({ user: userId, irisHash, eyeMovementPattern });
     await eyeData.save();
-    res.status(201).json({ success: true, message: "Eye data saved!" });
+
+    res.status(201).json({ success: true, message: "Eye scan registered successfully" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// POST: Verify eye scan
+// ✅ Save Eye Scan Data
+router.post("/save-eye-data", async (req, res) => {
+  try {
+    const { userId, irisHash, eyeMovementPattern } = req.body;
+    const existingData = await EyeData.findOne({ user: userId });
+
+    if (existingData) {
+      return res.status(400).json({ success: false, message: "User already registered!" });
+    }
+
+    const eyeData = new EyeData({ user: userId, irisHash, customEyeMovementPattern: eyeMovementPattern });
+    await eyeData.save();
+    res.status(201).json({ success: true, message: "Eye data registered successfully!" });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ✅ Verify Eye Scan
 router.post("/verify-eye", async (req, res) => {
   try {
     const { userId, irisHash, eyeMovementPattern } = req.body;
     const userEyeData = await EyeData.findOne({ user: userId });
 
-    if (userEyeData && userEyeData.irisHash === irisHash && userEyeData.customEyeMovementPattern === eyeMovementPattern) {
+    if (!userEyeData) {
+      return res.status(404).json({ success: false, message: "No registered eye scan found!" });
+    }
+
+    if (userEyeData.irisHash === irisHash && userEyeData.customEyeMovementPattern === eyeMovementPattern) {
       res.status(200).json({ success: true, message: "Authentication Successful!" });
     } else {
       res.status(401).json({ success: false, message: "Eye Scan does not match" });
