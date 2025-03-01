@@ -11,4 +11,3 @@ const eyeDataSchema = new mongoose.Schema({
   export default mongoose.model("EyeData", eyeDataSchema);
 
 
-  
