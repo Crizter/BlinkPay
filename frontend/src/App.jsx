@@ -1,23 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Home from "./pages/Home";
 import EyeScanAuth from "./pages/EyeScanAuth";
 import PaymentPage from "./pages/PaymentPage";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState("home");
+  const [path, setPath] = useState(window.location.pathname);
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case "eye-scan-auth":
-        return <EyeScanAuth goToHome={() => setCurrentPage("home")} />;
-      case "payment":
-        return <PaymentPage goToHome={() => setCurrentPage("home")} />;
+  useEffect(() => {
+    const onLocationChange = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", onLocationChange);
+    return () => window.removeEventListener("popstate", onLocationChange);
+  }, []);
+
+  const navigate = (newPath) => {
+    window.history.pushState({}, "", newPath);
+    window.dispatchEvent(new Event("popstate")); // Triggers re-render
+  };
+
+  const getPage = () => {
+    switch (path) {
+      case "/eye-scan-auth":
+        return <EyeScanAuth />;
+      case "/payment":
+        return <PaymentPage />;
+      case "/register":
+        return <Register navigate={navigate} />;
+      case "/login":
+        return <Login navigate={navigate} />;
       default:
-        return <Home goToPage={setCurrentPage} />;
+        return <Home />;
     }
   };
 
-  return <div>{renderPage()}</div>;
+  return <div>{getPage()}</div>;
 };
 
 export default App;
