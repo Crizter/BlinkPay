@@ -1,15 +1,16 @@
-import mongoose from 'mongoose' ; 
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  phone: { type: String, unique: true, required: true },
-  upiId: { type: String, required: true }, // e.g., user@upi
-  bankAccount: { type: String, required: true }, // Optional for direct bank linking
-  eyeScanData: { type: mongoose.Schema.Types.ObjectId, ref: "EyeData" }, // Linked to eye scan model
-  createdAt: { type: Date, default: Date.now }
+const IrisSchema = new mongoose.Schema({
+  leftIris: [{ x: Number, y: Number }],
+  rightIris: [{ x: Number, y: Number }],
 });
 
-export default mongoose.model("User",userSchema) ; 
+const UserSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  irisData: { type: IrisSchema, required: true },
+  upiId: { type: String, required: true },
+  balance: { type: Number, default: 1000 },
+});
 
-
+export default mongoose.model("User", UserSchema);
