@@ -1,8 +1,50 @@
 import express from "express";
 import EyeData from "../models/eyeDataSchema.models.js";
 import User from "../models/user.models.js";
-
+import Vendor from "../models/vendor.models.js";
 const router = express.Router();
+
+/**
+ * @route   POST /vendor/register
+ * @desc    Register a new vendor
+ * @access  Public
+ */
+router.post("/vendors/register", async (req, res) => {
+  try {
+    const { name, email, phone, businessName, upiId, bankAccount, irisData } = req.body;
+
+    if (!name || !email || !phone || !businessName || !upiId || !bankAccount || !irisData) {
+      return res.status(400).json({ success: false, message: "All fields including iris scan are required" });
+    }
+
+    // Check if vendor already exists
+    const existingVendor = await Vendor.findOne({ $or: [{ email }, { phone }] });
+    if (existingVendor) {
+      return res.status(400).json({ success: false, message: "Vendor with this email or phone already exists" });
+    }
+
+    // Create new vendor
+    const newVendor = new Vendor({
+      name,
+      email,
+      phone,
+      businessName,
+      upiId,
+      bankAccount,
+      irisData, // Store scanned iris data
+    });
+
+    await newVendor.save();
+    res.status(201).json({ success: true, message: "Vendor registered successfully!", vendor: newVendor });
+
+  } catch (error) {
+    console.error("Vendor Registration Error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
+
 
 /**
  * @route   POST /api/users/register
@@ -136,6 +178,47 @@ router.post("/eye/verify", async (req, res) => {
       res.status(401).json({ success: false, message: "Eye Scan does not match" });
     }
   } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/vendor/register", async (req, res) => {
+  try {
+    // const { name, email, irisData, upiId } = req.body;
+    const {name,email,phone,businessName,upiId,bankAccount,transactions} = req.body;
+
+    // 1️⃣ Validate required fields
+    if (!name || !email || !irisData || !upiId) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    // 2️⃣ Validate irisData structure
+    if (
+      !irisData.leftIris ||
+      !irisData.rightIris ||
+      !Array.isArray(irisData.leftIris) ||
+      !Array.isArray(irisData.rightIris)
+    ) {
+      return res.status(400).json({ success: false, message: "Invalid irisData format" });
+    }
+
+    // 3️⃣ Check if email or UPI ID is already registered
+    const existingUser = await User.findOne({ $or: [{ email }, { upiId }] });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "User with this email or UPI ID already exists" });
+    }
+
+    // 4️⃣ Create and save new user
+    const newUser = new User({ name, email, irisData, upiId, balance: 1000 });
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: newUser,
+    });
+  } catch (error) {
+    console.error("Registration Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

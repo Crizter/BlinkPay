@@ -4,7 +4,7 @@ import EyeScanAuth from "./pages/EyeScanAuth";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CameraSelector from "./components/CameraSelector"; // Import CameraSelector
-
+import RegisterVendor from "./pages/RegisterVendor"; // Import RegisterVendor
 const App = () => {
   const [path, setPath] = useState(window.location.pathname);
 
@@ -29,6 +29,8 @@ const App = () => {
         return <Login navigate={navigate} />;
       case "/camera-selector":
         return <CameraSelector navigate={navigate} />; // Added CameraSelector
+      case "/register-vendor":
+        return <RegisterVendor navigate={navigate} />; // Added RegisterVendor
       default:
         return <Home navigate={navigate} />; // ✅ Pass navigate to Home
     }
