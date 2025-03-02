@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import axios from 'axios';
 import scanIris from '../utils/scanIris';
+import './Register.css';
+
 
 // TODO FIX ENV
 // const API_BASE_URL = import.meta.env.VITE_URL; // Use API URL from .env
@@ -55,42 +57,66 @@ const Register = ({ goToHome }) => {
     }
   };
 
+  // return (
+  //   <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+  //     <h2 className="text-3xl font-bold mb-4">Register</h2>
+
+  //     <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+  //       <form onSubmit={handleSubmit} className="space-y-4">
+  //         <input 
+  //           type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required 
+  //           className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
+  //         />
+  //         <input 
+  //           type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required 
+  //           className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
+  //         />
+  //         <input 
+  //           type="text" name="upiId" placeholder="UPI ID" value={formData.upiId} onChange={handleChange} required 
+  //           className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
+  //         />
+
+  //         {/* Video feed for scanning */}
+  //         <div className="flex flex-col items-center">
+  //           <video ref={videoRef} className="w-64 h-48 bg-gray-700 rounded mb-2" autoPlay playsInline />
+  //           <button 
+  //             type="button" onClick={handleScan} 
+  //             className={`w-full py-2 rounded ${isScanning ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
+  //             disabled={isScanning}
+  //           >
+  //             {isScanning ? 'Scanning...' : (formData.irisData ? 'Iris Scanned ✅' : 'Scan Iris')}
+  //           </button>
+  //         </div>
+
+  //         <button 
+  //           type="submit" 
+  //           className={`w-full py-2 ${loading ? 'bg-gray-500' : 'bg-green-500 hover:bg-green-600'} text-white rounded`} 
+  //           disabled={loading}
+  //         >
+  //           {loading ? 'Registering...' : 'Register'}
+  //         </button>
+  //       </form>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
-      <h2 className="text-3xl font-bold mb-4">Register</h2>
+    <div className="register-container">
+      <h2 className="register-title">Register</h2>
+      <div className="register-box">
+        <form onSubmit={handleSubmit} className="register-form">
+          <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
+          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+          <input type="text" name="upiId" placeholder="UPI ID" value={formData.upiId} onChange={handleChange} required />
 
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input 
-            type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required 
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
-          />
-          <input 
-            type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required 
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
-          />
-          <input 
-            type="text" name="upiId" placeholder="UPI ID" value={formData.upiId} onChange={handleChange} required 
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:border-blue-500"
-          />
-
-          {/* Video feed for scanning */}
-          <div className="flex flex-col items-center">
-            <video ref={videoRef} className="w-64 h-48 bg-gray-700 rounded mb-2" autoPlay playsInline />
-            <button 
-              type="button" onClick={handleScan} 
-              className={`w-full py-2 rounded ${isScanning ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
-              disabled={isScanning}
-            >
+          <div className="video-container">
+            <video ref={videoRef} className="video-feed" autoPlay playsInline />
+            <button type="button" onClick={handleScan} className="scan-button" disabled={isScanning}>
               {isScanning ? 'Scanning...' : (formData.irisData ? 'Iris Scanned ✅' : 'Scan Iris')}
             </button>
           </div>
 
-          <button 
-            type="submit" 
-            className={`w-full py-2 ${loading ? 'bg-gray-500' : 'bg-green-500 hover:bg-green-600'} text-white rounded`} 
-            disabled={loading}
-          >
+          <button type="submit" className="submit-button" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
@@ -98,5 +124,5 @@ const Register = ({ goToHome }) => {
     </div>
   );
 };
-
+  
 export default Register;
