@@ -1,32 +1,34 @@
-import { useState } from "react";
-import Home from "./pages/Home";
-import EyeScanAuth from "./pages/EyeScanAuth";
-// import PaymentPage from "./pages/PaymentPage";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import CameraSelector from "./components/CameraSelector"; // Import CameraSelector
+import React, { useState } from "react";
+import UserRegister from "./pages/UserRegister";
+import VendorRegister from "./pages/VendorRegister";
+import EyeVerifyPage from "./pages/EyeVerifyPage";
+import "./App.css";
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState("home");
+function App() {
+    const [currentPage, setCurrentPage] = useState("home");
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case "eye-scan-auth":
-        return <EyeScanAuth goToHome={() => setCurrentPage("home")} />;
-      // case "payment":
-        // return <PaymentPage goToHome={() => setCurrentPage("home")} />; 
-      case "register":
-        return <Register goToHome={() => setCurrentPage("home")} />;
-      case "login":
-        return <Login goToHome={() => setCurrentPage("home")} />;
-      case "camera-selector":
-        return <CameraSelector goToHome={() => setCurrentPage("home")} />; // Added CameraSelector
-      default:
-        return <Home goToPage={setCurrentPage} />;
-    }
-  };
+    return (
+        <div className="app-container">
+            <nav>
+                <button onClick={() => setCurrentPage("home")}>Home</button>
+                <button onClick={() => setCurrentPage("user")}>User Register</button>
+                <button onClick={() => setCurrentPage("vendor")}>Vendor Register</button>
+                <button onClick={() => setCurrentPage("verify")}>Eye Verify</button>
+            </nav>
 
-  return <div>{renderPage()}</div>;
-};
+            <div className="content">
+                {currentPage === "home" && (
+                    <div>
+                        <h1>Welcome to BlinkPay</h1>
+                        <p>Register as a User or Vendor to get started.</p>
+                    </div>
+                )}
+                {currentPage === "user" && <UserRegister />}
+                {currentPage === "vendor" && <VendorRegister />}
+                {currentPage === "verify" && <EyeVerifyPage />}
+            </div>
+        </div>
+    );
+}
 
 export default App;

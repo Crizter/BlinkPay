@@ -1,0 +1,69 @@
+.webcam-preview {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.scanning-effect {
+    animation: scan 2s linear;
+    border: 2px solid #0ff;
+}
+
+.result-container {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.scan-message {
+    color: #0ff;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.user-data {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #0ff;
+    text-align: left;
+}
+
+.data-item {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.data-item span {
+    color: #0ff;
+    font-weight: bold;
+    display: inline-block;
+    width: 80px;
+}
+
+.scanning-btn {
+    background: #005555;
+    animation: pulse 1.5s infinite;
+}
+
+.message {
+    color: #0ff;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+@keyframes scan {
+    0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+}
+
+@keyframes pulse {
+    0% { background-color: #005555; }
+    50% { background-color: #008888; }
+    100% { background-color: #005555; }
+}

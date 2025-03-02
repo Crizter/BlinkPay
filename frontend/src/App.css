@@ -1,0 +1,38 @@
+.app-container {
+    text-align: center;
+    background: #121212;
+    color: #0ff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+nav {
+    background: #1a1a1a;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav button {
+    background: #0ff;
+    color: #111;
+    font-size: 16px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+nav button:hover {
+    background: #00cccc;
+}
+
+.content {
+    margin-top: 20px;
+}
