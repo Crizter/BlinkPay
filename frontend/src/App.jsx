@@ -9,16 +9,16 @@ function App() {
 
     return (
         <div className="app-container">
-            <nav>
+            <nav className="app-nav">
                 <button onClick={() => setCurrentPage("home")}>Home</button>
                 <button onClick={() => setCurrentPage("user")}>User Register</button>
                 <button onClick={() => setCurrentPage("vendor")}>Vendor Register</button>
                 <button onClick={() => setCurrentPage("verify")}>Eye Verify</button>
             </nav>
 
-            <div className="content">
+            <main className="app-main">
                 {currentPage === "home" && (
-                    <div>
+                    <div className="home-container">
                         <h1>Welcome to BlinkPay</h1>
                         <p>Register as a User or Vendor to get started.</p>
                     </div>
@@ -26,7 +26,7 @@ function App() {
                 {currentPage === "user" && <UserRegister />}
                 {currentPage === "vendor" && <VendorRegister />}
                 {currentPage === "verify" && <EyeVerifyPage />}
-            </div>
+            </main>
         </div>
     );
 }

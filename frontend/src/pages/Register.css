@@ -1,69 +1,119 @@
-.webcam-preview {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-}
+/* Register.css - Shared styles for registration and verification pages */
 
-.scanning-effect {
-    animation: scan 2s linear;
-    border: 2px solid #0ff;
-}
-
-.result-container {
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
+.register-container {
+    max-width: 500px;
+    margin: 0 auto;
     padding: 20px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.scan-message {
-    color: #0ff;
-    font-size: 18px;
+h2 {
+    color: #007bff;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.user-data {
-    background: rgba(0, 0, 0, 0.5);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 3px solid #0ff;
-    text-align: left;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.data-item {
-    margin: 10px 0;
+input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 16px;
 }
 
-.data-item span {
-    color: #0ff;
+button {
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
     font-weight: bold;
-    display: inline-block;
-    width: 80px;
+    transition: background 0.3s;
 }
 
-.scanning-btn {
-    background: #005555;
+button:hover {
+    background: #0056b3;
+}
+
+button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+.webcam-container {
+    width: 100%;
+    margin: 15px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.webcam-preview {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.scanning-effect {
     animation: pulse 1.5s infinite;
 }
 
-.message {
-    color: #0ff;
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-@keyframes scan {
-    0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
-}
-
 @keyframes pulse {
-    0% { background-color: #005555; }
-    50% { background-color: #008888; }
-    100% { background-color: #005555; }
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.3) saturate(1.5);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+.scan-message {
+    text-align: center;
+    font-size: 18px;
+    padding: 25px;
+    background: #f0f9ff;
+    color: #0077cc;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.status-message {
+    text-align: center;
+    margin: 10px 0;
+    color: #666;
+}
+
+.result-container {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.success-result {
+    text-align: center;
+}
+
+.user-details {
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.error-message {
+    color: #d9534f;
+    text-align: center;
+    font-weight: bold;
 }

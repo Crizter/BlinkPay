@@ -32,13 +32,13 @@ const UserRegister = () => {
         const base64Response = await fetch(image);
         const blob = await base64Response.blob();
         
-        // Create a File from the Blob
-        const imageFile = new File([blob], "eye-scan.png", { type: "image/png" });
+        // Create a File from the Blob with unique file name
+        const imageFile = new File([blob], `user_${name.replace(/\s+/g, '_')}_${Date.now()}.png`, { type: "image/png" });
     
         const formData = new FormData();
         formData.append("name", name);
         formData.append("upi_id", upiId);
-        formData.append("image", imageFile); // Now appending a File object
+        formData.append("image", imageFile); // Now appending a File object with unique naming
     
         try {
             const response = await fetch("http://127.0.0.1:8000/register_user/", {
