@@ -182,6 +182,50 @@ router.post("/eye/verify", async (req, res) => {
   }
 });
 
+router.post("/scan-eye", async (req, res) => {
+  try {
+      console.log("Received request at /scan-eye");
+
+      // Log full request body for debugging
+      console.log("Request Body:", req.body);
+
+      const { eyeScanData } = req.body; // Receive eye scan data
+
+      if (!eyeScanData) {
+          console.log("❌ Missing eyeScanData in request.");
+          return res.status(400).json({ message: "Eye scan data is required." });
+      }
+
+      console.log("🔍 Searching for user with eye scan data...");
+
+      // Match the scanned eye data with the database
+      const user = await User.findOne({ eyeScan: eyeScanData });
+
+      if (!user) {
+          console.log("❌ No matching user found.");
+          return res.status(404).json({ message: "User not found." });
+      }
+
+      console.log("✅ User found:", { id: user._id, name: user.name });
+
+      // If match found, return user details (exclude sensitive info)
+      res.json({
+          success: true,
+          user: {
+              id: user._id,
+              name: user.name,
+              upiId: user.upiId, // Linked payment method
+              balance: user.balance,
+          },
+      });
+
+  } catch (error) {
+      console.error("🔥 Error authenticating eye scan:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 router.post("/vendor/register", async (req, res) => {
   try {
     // const { name, email, irisData, upiId } = req.body;
