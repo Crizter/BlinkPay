@@ -1,132 +1,127 @@
-import { useState, useEffect, useRef } from "react";
-import { FaceMesh } from "@mediapipe/face_mesh";
-import { Camera } from "@mediapipe/camera_utils";
+import React, { useEffect, useRef, useState } from "react";
+import * as faceMesh from "@mediapipe/face_mesh";
+import * as cam from "@mediapipe/camera_utils";
 
-const EyeScanAuth = ({ goToHome }) => {
+// Backend URL (Set here for easy changes)
+const BACKEND_URL = "http://localhost:5003";
+
+const EyeScanAuth = () => {
   const videoRef = useRef(null);
-  const [cameras, setCameras] = useState([]);
-  const [selectedCamera, setSelectedCamera] = useState(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const cameraInstance = useRef(null); // Store camera instance
+  const canvasRef = useRef(null);
+  const [camera, setCamera] = useState(null);
+  const [landmarks, setLandmarks] = useState(null);
+  const [authStatus, setAuthStatus] = useState(null);
+  const [isScanning, setIsScanning] = useState(true); // To control scanning state
 
-  // Fetch available cameras
   useEffect(() => {
-    async function getCameras() {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === "videoinput");
-        setCameras(videoDevices);
-        if (videoDevices.length > 0) {
-          setSelectedCamera(videoDevices[0].deviceId); // Default to first camera
-        }
-      } catch (error) {
-        console.error("Error fetching camera devices:", error);
-      }
-    }
-    getCameras();
-  }, []);
+    if (!videoRef.current) return;
 
-  // Stop existing video stream
-  const stopVideoStream = () => {
-    if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-      videoRef.current.srcObject = null;
+    // Initialize Face Mesh
+    const faceMeshModel = new faceMesh.FaceMesh({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+    });
+
+    faceMeshModel.setOptions({
+      maxNumFaces: 1,
+      refineLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    faceMeshModel.onResults(onResults);
+
+    // Start Camera
+    const newCamera = new cam.Camera(videoRef.current, {
+      onFrame: async () => {
+        if (isScanning) {
+          await faceMeshModel.send({ image: videoRef.current });
+        }
+      },
+      width: 640,
+      height: 480,
+    });
+
+    newCamera.start();
+    setCamera(newCamera);
+
+    return () => {
+      if (newCamera) newCamera.stop();
+    };
+  }, [isScanning]); // Reacts to scanning state
+
+  // Process face landmarks
+  const onResults = (results) => {
+    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+      const detectedLandmarks = results.multiFaceLandmarks[0];
+      setLandmarks(detectedLandmarks);
+      console.log("📍 Face Landmarks:", detectedLandmarks);
+
+      // Draw landmarks
+      const canvasCtx = canvasRef.current.getContext("2d");
+      canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+      detectedLandmarks.forEach((point) => {
+        const x = point.x * canvasRef.current.width;
+        const y = point.y * canvasRef.current.height;
+        canvasCtx.beginPath();
+        canvasCtx.arc(x, y, 2, 0, 2 * Math.PI);
+        canvasCtx.fillStyle = "red";
+        canvasCtx.fill();
+      });
+
+      // Stop scanning after first detection
+      setIsScanning(false);
+    } else {
+      console.warn("No face detected. Try again.");
     }
   };
 
-  // Start scanning process
-  const startEyeScan = async () => {
-    if (!selectedCamera) {
-      alert("No camera selected!");
+  // Send Eye Scan Data to Backend
+  const authenticateUser = async () => {
+    if (!landmarks) {
+      alert("No face detected. Please try again.");
       return;
     }
 
-    setIsScanning(true);
-    stopVideoStream(); // Stop previous video stream
+    console.log("✅ Sending Face Landmarks:", landmarks);
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: selectedCamera }, width: 640, height: 480 }
-      });
-
-      videoRef.current.srcObject = stream;
-
-      // Initialize FaceMesh
-      const faceMesh = new FaceMesh({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-      });
-
-      faceMesh.setOptions({
-        maxNumFaces: 1,
-        refineLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
-      });
-
-      faceMesh.onResults((results) => {
-        if (results.multiFaceLandmarks.length > 0) {
-          console.log("Face Landmarks:", results.multiFaceLandmarks[0]);
-          // Process eye data here
-        }
-      });
-
-      // Attach Camera to FaceMesh
-      if (cameraInstance.current) cameraInstance.current.stop(); // Stop old camera instance
-      cameraInstance.current = new Camera(videoRef.current, {
-        onFrame: async () => {
-          await faceMesh.send({ image: videoRef.current });
+      const response = await fetch(`${BACKEND_URL}/api/scan-eye`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        width: 640,
-        height: 480
+        body: JSON.stringify({ landmarks }),
       });
 
-      cameraInstance.current.start();
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      setIsScanning(false);
-    }
-  };
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Authentication failed");
+      }
 
-  // Restart video stream when camera selection changes
-  useEffect(() => {
-    if (selectedCamera) {
-      startEyeScan();
+      const data = await response.json();
+      setAuthStatus(`✅ Authentication Successful: ${data.message}`);
+      console.log("Authentication Success:", data);
+    } catch (error) {
+      console.error("❌ Error authenticating:", error);
+      setAuthStatus("❌ Authentication Failed");
     }
-  }, [selectedCamera]);
+
+    // Restart scanning after 5 seconds
+    setTimeout(() => setIsScanning(true), 5000);
+  };
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Eye Scan Authentication</h2>
-
-      {/* Camera Selection */}
-      <label>Select Camera:</label>
-      <select
-        value={selectedCamera}
-        onChange={(e) => setSelectedCamera(e.target.value)}
-      >
-        {cameras.map((camera) => (
-          <option key={camera.deviceId} value={camera.deviceId}>
-            {camera.label || `Camera ${cameras.indexOf(camera) + 1}`}
-          </option>
-        ))}
-      </select>
-
-      <br /><br />
-
-      {/* Start Scan Button */}
-      <button onClick={startEyeScan} disabled={isScanning}>
-        {isScanning ? "Scanning..." : "Start Eye Scan"}
+      <video ref={videoRef} style={{ display: "none" }} />
+      <canvas ref={canvasRef} width="640" height="480" style={{ border: "1px solid black" }} />
+      <button onClick={authenticateUser} style={{ marginTop: "10px", padding: "10px" }}>
+        Start Eye Scan
       </button>
-
-      <br /><br />
-
-      {/* Video Preview */}
-      <video ref={videoRef} autoPlay playsInline style={{ width: "100%", maxWidth: "640px", border: "2px solid black" }}></video>
-
-      <br /><br />
-
-      {/* Back to Home */}
-      <button onClick={goToHome}>Go Back</button>
+      {authStatus && <p>{authStatus}</p>}
     </div>
   );
 };
