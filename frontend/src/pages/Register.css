@@ -1,8 +1,16 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #333;
+}
+
 /* Register.css - Shared styles for registration and verification pages */
 
 .register-container {
     max-width: 500px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     background: white;
     border-radius: 8px;
@@ -116,4 +124,17 @@ button:disabled {
     color: #d9534f;
     text-align: center;
     font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .register-container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    input, button {
+        font-size: 14px;
+        padding: 10px;
+    }
 }

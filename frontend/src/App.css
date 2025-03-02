@@ -1,12 +1,20 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #ffffff;
+}
+
 .app-container {
     text-align: center;
     background: #121212;
-    color: #0ff;
+    color: #ffffff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 1s ease-in-out;
 }
 
 nav {
@@ -16,12 +24,51 @@ nav {
     display: flex;
     justify-content: center;
     gap: 20px;
+    animation: slideDown 0.5s ease-in-out;
 }
 
 nav button {
-    background: #0ff;
-    color: #111;
+    background: #ffffff;
+    color: #121212;
     font-size: 16px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+
+nav button:hover {
+    background: #f0f0f0;
+    color: #000000;
+}
+
+.content {
+    margin-top: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.home-container {
+    padding: 20px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.home-container h1 {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.home-container p {
+    color: #cccccc;
+    margin-bottom: 20px;
+}
+
+.home-container button {
+    background: #007bff;
+    color: #ffffff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -29,10 +76,25 @@ nav button {
     transition: background 0.3s;
 }
 
-nav button:hover {
-    background: #00cccc;
+.home-container button:hover {
+    background: #0056b3;
 }
 
-.content {
-    margin-top: 20px;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
 }
