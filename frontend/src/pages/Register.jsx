@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Register.css"; // Import custom CSS
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", upiId: "" }
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", upiId: "" }) ; 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
