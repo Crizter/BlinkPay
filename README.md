@@ -37,8 +37,7 @@ Image Storage: Store images in designated directories.
 ### Payment flow
 ![Payment flow](./frontend/src/assets/PaymentFlow.png)
 
-### User Registration
-![User Registration](./frontend/src/assets/userReg.png)
+
 
 ### Eye Verification
 ![Eye Verification](./frontend/src/assets/eyeVer.png)
