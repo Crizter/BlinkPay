@@ -77,7 +77,7 @@ const EyeVerifyPage = () => {
                                 </div>
                             </div>
                         ) : (
-                            <p className="error-message">❌ {verificationResult?.message || "Verification failed"}</p>
+                            <p className="error-message"> {verificationResult?.message || "Scanning.."}</p>
                         )}
                     </div>
                 )}
